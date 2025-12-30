@@ -6,7 +6,6 @@
     <title>Aarambha IT Club</title>
     
     <!-- Icons & Fonts -->
-    <link rel="icon" type="image/png" href="itclub.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
@@ -1607,7 +1606,10 @@
                     t.innerHTML += `
                         <tr>
                             <td><strong>${r.name}</strong></td><td>${r.dept}</td><td>${r.team}</td>
-                            <td><button class="btn btn-danger btn-sm" onclick="delItem('join_requests','${r.id}')"><i class="fas fa-trash"></i></button></td>
+                            <td>
+                                <button class="btn btn-success btn-sm" onclick="acceptJoinRequest('${r.id}', '${r.name}', '${r.dept}', '${r.team}')" title="Accept"><i class="fas fa-check"></i> Accept</button>
+                                <button class="btn btn-danger btn-sm" onclick="delItem('join_requests','${r.id}')" title="Reject"><i class="fas fa-trash"></i></button>
+                            </td>
                         </tr>`;
                 });
             });
@@ -1622,6 +1624,32 @@
                 });
             });
         }
+
+        // --- ACCEPT JOIN REQUEST ---
+        window.acceptJoinRequest = async (requestId, name, dept, team) => {
+            try {
+                // Create new member from join request
+                const memberData = {
+                    name: name,
+                    dept: dept,
+                    team: team,
+                    role: dept, // Use department as initial role
+                    isLeader: false,
+                    timestamp: new Date()
+                };
+
+                // Add to members collection
+                await addDoc(pCol('members'), memberData);
+
+                // Delete from join_requests
+                await deleteDoc(pDoc('join_requests', requestId));
+
+                toast(`${name} has been added to the team!`);
+            } catch(e) {
+                console.error(e);
+                toast('Error accepting request');
+            }
+        };
 
         // --- MEMBER MANAGEMENT (Edit/Add) ---
         
