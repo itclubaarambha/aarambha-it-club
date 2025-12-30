@@ -438,6 +438,36 @@
         th { text-align: left; padding: 16px; background: #f0f7ff; border-bottom: 1px solid rgba(0, 102, 204, 0.1); font-weight: 600; color: #0066cc; }
         td { padding: 16px; border-bottom: 1px solid rgba(0, 102, 204, 0.05); vertical-align: middle; }
         tr:last-child td { border-bottom: none; }
+
+        /* Draggable Member Rows */
+        tbody tr.member-row-draggable {
+            cursor: grab; transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+        }
+        tbody tr.member-row-draggable:active {
+            cursor: grabbing;
+        }
+        tbody tr.member-row-draggable:hover {
+            background: #f0f7ff; box-shadow: inset 0 0 0 1px rgba(0, 102, 204, 0.2);
+        }
+        tbody tr.member-row-draggable.dragging {
+            opacity: 0.6; background: #e6f2ff; border-left: 4px solid #0066cc;
+        }
+        tbody tr.member-row-draggable.drag-over {
+            background: linear-gradient(to bottom, rgba(0, 102, 204, 0.15), rgba(0, 102, 204, 0.08));
+            border-top: 3px solid #0066cc;
+            border-bottom: 3px solid #0066cc;
+        }
+        .member-row-drag-handle {
+            cursor: grab; color: #0066cc; font-size: 1.2rem; user-select: none; margin-right: 8px;
+            opacity: 0.7; transition: opacity 0.2s ease;
+        }
+        tbody tr.member-row-draggable:hover .member-row-drag-handle {
+            opacity: 1;
+        }
+        .member-row-drag-handle:active {
+            cursor: grabbing;
+        }
         
         /* Banner Style */
         #siteBanner {
@@ -1174,7 +1204,7 @@
     <!-- FIREBASE APP LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, setDoc, getDoc, deleteDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, setDoc, getDoc, deleteDoc, updateDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         // Storage import removed as requested
 
@@ -1432,6 +1462,8 @@
             onSnapshot(pCol('members'), snap => {
                 membersCache = [];
                 snap.forEach(d => membersCache.push({id: d.id, ...d.data()}));
+                // Sort by order field for consistent display
+                membersCache.sort((a, b) => (a.order || 0) - (b.order || 0));
                 document.getElementById('statMem').innerText = membersCache.length;
                 renderTeam('all');
                 renderAdminMembers();
@@ -1480,7 +1512,13 @@
             let list = membersCache;
             if(cat !== 'all') list = list.filter(m => m.team === cat);
             
-            list.sort((a,b) => (b.isLeader||0) - (a.isLeader||0)); // Leaders first
+            // Sort by admin-defined order first, then leaders first within same order
+            list.sort((a, b) => {
+                const orderA = a.order || 0;
+                const orderB = b.order || 0;
+                if (orderA !== orderB) return orderA - orderB;
+                return (b.isLeader || 0) - (a.isLeader || 0);
+            });
             
             if(list.length === 0) g.innerHTML = '<p class="text-muted" style="grid-column:1/-1; text-align:center;">No members found.</p>';
 
@@ -1715,16 +1753,36 @@
         // Render Members Admin with Edit/Delete
         function renderAdminMembers() {
             const t = document.querySelector('#tblMembers tbody'); t.innerHTML = '';
-            membersCache.forEach(m => {
-                t.innerHTML += `
-                    <tr>
-                        <td><strong>${m.name}</strong></td><td>${m.role}</td><td><span style="background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:10px; font-size:0.8rem; font-weight:700;">${m.team}</span></td>
-                        <td>${m.isLeader?'<i class="fas fa-check"></i>':'-'}</td>
-                        <td>
-                            <button class="btn btn-secondary btn-sm" onclick="openMemberForm('${m.id}')" title="Edit"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-danger btn-sm" onclick="delItem('members','${m.id}')" title="Delete"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>`;
+            
+            // Sort by order field if available
+            const sortedMembers = [...membersCache].sort((a, b) => (a.order || 0) - (b.order || 0));
+            
+            sortedMembers.forEach((m, index) => {
+                const row = document.createElement('tr');
+                row.className = 'member-row-draggable';
+                row.draggable = true;
+                row.dataset.id = m.id;
+                row.dataset.index = index;
+                
+                row.innerHTML = `
+                    <td><span class="member-row-drag-handle" title="Drag to reorder"><i class="fas fa-grip-vertical"></i></span> <strong>${m.name}</strong></td>
+                    <td>${m.role}</td>
+                    <td><span style="background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:10px; font-size:0.8rem; font-weight:700;">${m.team}</span></td>
+                    <td>${m.isLeader?'<i class="fas fa-check"></i>':'-'}</td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm" onclick="openMemberForm('${m.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="delItem('members','${m.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+                    </td>`;
+                
+                // Add drag event listeners
+                row.addEventListener('dragstart', handleMemberDragStart);
+                row.addEventListener('dragover', handleMemberDragOver);
+                row.addEventListener('drop', handleMemberDrop);
+                row.addEventListener('dragend', handleMemberDragEnd);
+                row.addEventListener('dragenter', e => e.preventDefault());
+                row.addEventListener('dragleave', handleMemberDragLeave);
+                
+                t.appendChild(row);
             });
         }
 
@@ -1803,6 +1861,101 @@
             await setDoc(pDoc('settings', 'config'), { teamTypes }, { merge: true });
             document.getElementById('newTeamType').value = '';
         };
+
+        // --- MEMBER DRAG & DROP REORDERING ---
+        let dragSrcMemberEl = null;
+        let dragOverRow = null;
+
+        function handleMemberDragStart(e) {
+            dragSrcMemberEl = this;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', this.dataset.id);
+            setTimeout(() => this.classList.add('dragging'), 0);
+        }
+
+        function handleMemberDragOver(e) {
+            if (e.preventDefault) e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            const targetRow = e.target.closest('tr.member-row-draggable');
+            if (targetRow && targetRow !== dragSrcMemberEl) {
+                if (dragOverRow && dragOverRow !== targetRow) {
+                    dragOverRow.classList.remove('drag-over');
+                }
+                dragOverRow = targetRow;
+                targetRow.classList.add('drag-over');
+            }
+            return false;
+        }
+
+        function handleMemberDragLeave(e) {
+            const targetRow = e.target.closest('tr.member-row-draggable');
+            if (targetRow === dragOverRow) {
+                dragOverRow.classList.remove('drag-over');
+                dragOverRow = null;
+            }
+        }
+
+        async function handleMemberDrop(e) {
+            if (e.stopPropagation) e.stopPropagation();
+            if (e.preventDefault) e.preventDefault();
+            
+            if (dragOverRow) {
+                dragOverRow.classList.remove('drag-over');
+            }
+            
+            const targetRow = e.target.closest('tr.member-row-draggable');
+            if (!targetRow || dragSrcMemberEl === targetRow) return false;
+            
+            const srcId = dragSrcMemberEl.dataset.id;
+            const tgtId = targetRow.dataset.id;
+            
+            const srcMember = membersCache.find(m => m.id === srcId);
+            const tgtMember = membersCache.find(m => m.id === tgtId);
+            
+            if (srcMember && tgtMember) {
+                try {
+                    // Re-index all members based on their position in the sorted array
+                    const sortedMembers = [...membersCache].sort((a, b) => (a.order || 0) - (b.order || 0));
+                    const srcIdx = sortedMembers.findIndex(m => m.id === srcId);
+                    const tgtIdx = sortedMembers.findIndex(m => m.id === tgtId);
+                    
+                    if (srcIdx === -1 || tgtIdx === -1) return false;
+                    
+                    // Re-order: remove src and insert at target position
+                    const reordered = [...sortedMembers];
+                    reordered.splice(srcIdx, 1);
+                    reordered.splice(tgtIdx, 0, srcMember);
+                    
+                    // Update order field for each member sequentially
+                    for (let i = 0; i < reordered.length; i++) {
+                        const member = reordered[i];
+                        member.order = i;
+                        await updateDoc(pDoc('members', member.id), { order: i });
+                    }
+                    
+                    toast('Members reordered');
+                    // Re-sort cache and re-render
+                    membersCache.sort((a, b) => (a.order || 0) - (b.order || 0));
+                    renderAdminMembers();
+                } catch(err) {
+                    console.error('Error reordering:', err);
+                    toast('Error reordering members');
+                }
+            }
+            
+            return false;
+        }
+
+        function handleMemberDragEnd(e) {
+            this.classList.remove('dragging');
+            if (dragOverRow) {
+                dragOverRow.classList.remove('drag-over');
+                dragOverRow = null;
+            }
+            dragSrcMemberEl = null;
+            document.querySelectorAll('tr.member-row-draggable').forEach(row => row.classList.remove('drag-over'));
+        }
 
         // --- BANNER SETTINGS ---
         document.getElementById('btnSaveBanner').onclick = async () => {
