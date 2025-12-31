@@ -3166,7 +3166,7 @@
     <!-- FIREBASE APP LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, setDoc, getDoc, deleteDoc, updateDoc, query, orderBy, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, setDoc, getDoc, deleteDoc, updateDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         // Storage import removed as requested
 
@@ -3227,18 +3227,16 @@
         let joinRequestsCache = [];
         let confirmCallback = null;
         
-        // --- ADMIN EMAIL (HARDCODED) ---
-        const ADMIN_EMAIL = 'admin@aarambha.com';
-        
         // --- ANALYTICS & ACTIVITY TRACKING ---
-        let activityLog = [];
+        let activityLog = JSON.parse(localStorage.getItem('activityLog')) || [];
+        let visitorStatsFromStorage = JSON.parse(localStorage.getItem('visitorStats'));
         let visitorStats = {
-            today: 0,
-            unique: new Set(),
-            devices: { mobile: 0, laptop: 0, tablet: 0 },
-            browsers: {},
-            pages: {},
-            liveVisitors: 0
+            today: visitorStatsFromStorage?.today || 0,
+            unique: new Set(visitorStatsFromStorage?.unique || []),
+            devices: visitorStatsFromStorage?.devices || { mobile: 0, laptop: 0, tablet: 0 },
+            browsers: visitorStatsFromStorage?.browsers || {},
+            pages: visitorStatsFromStorage?.pages || {},
+            liveVisitors: visitorStatsFromStorage?.liveVisitors || 0
         };
         let liveVisitorIds = new Set();
         let lastActivityTime = Date.now();
@@ -3306,23 +3304,12 @@
             saveVisitorStats();
         };
         
-        // Save visitor stats to Firebase
-        const saveVisitorStats = async () => {
-            try {
-                const today = new Date().toISOString().split('T')[0];
-                await setDoc(pDoc('analytics', 'visitor_stats'), {
-                    date: today,
-                    today: visitorStats.today,
-                    unique: Array.from(visitorStats.unique),
-                    devices: visitorStats.devices,
-                    browsers: visitorStats.browsers,
-                    pages: visitorStats.pages,
-                    liveVisitors: visitorStats.liveVisitors,
-                    lastUpdated: new Date()
-                });
-            } catch(err) {
-                console.log('Analytics save error (may be normal for anonymous users):', err.code);
-            }
+        // Save visitor stats to localStorage
+        const saveVisitorStats = () => {
+            localStorage.setItem('visitorStats', JSON.stringify({
+                ...visitorStats,
+                unique: Array.from(visitorStats.unique)
+            }));
         };
         
         // Log activity
@@ -3343,73 +3330,42 @@
         };
         
         // Update activity display
-        const updateActivityDisplay = async () => {
+        const updateActivityDisplay = () => {
             const container = document.getElementById('activityLogContainer');
             if (!container) return;
             
-            try {
-                // Load activity logs from Firebase, ordered by timestamp descending
-                const q = query(pCol('activity_log'), orderBy('timestamp', 'desc'));
-                const snap = await getDocs(q);
-                const logs = [];
-                snap.forEach(doc => {
-                    const data = doc.data();
-                    logs.push({
-                        type: data.type,
-                        message: data.message,
-                        timestamp: data.timestamp?.toDate?.()?.toLocaleString?.() || new Date(data.timestamp).toLocaleString?.() || data.timestamp,
-                        details: data.details || {}
-                    });
-                });
-                
-                if (logs.length === 0) {
-                    container.innerHTML = '<p class="text-muted" style="text-align: center; padding: 40px 20px;">No activity yet. Actions will appear here.</p>';
-                    return;
-                }
-                
-                container.innerHTML = logs.map((log, idx) => `
-                    <div style="background: #f0f7ff; padding: 12px; border-radius: 8px; border-left: 4px solid var(--primary);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                            <span style="font-weight: 600; color: var(--text-head);">${log.type}</span>
-                            <span style="font-size: 0.8rem; color: var(--text-muted);">${log.timestamp}</span>
-                        </div>
-                        <div style="color: var(--text-body);">${log.message}</div>
-                        ${Object.keys(log.details).length > 0 ? `<div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 6px;">${JSON.stringify(log.details)}</div>` : ''}
-                    </div>
-                `).join('');
-            } catch(err) {
-                console.log('Error loading activity log:', err.message);
-                container.innerHTML = '<p class="text-muted" style="text-align: center; padding: 40px 20px;">Unable to load activity log.</p>';
+            if (activityLog.length === 0) {
+                container.innerHTML = '<p class="text-muted" style="text-align: center; padding: 40px 20px;">No activity yet. Actions will appear here.</p>';
+                return;
             }
+            
+            container.innerHTML = activityLog.map((log, idx) => `
+                <div style="background: #f0f7ff; padding: 12px; border-radius: 8px; border-left: 4px solid var(--primary);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span style="font-weight: 600; color: var(--text-head);">${log.type}</span>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">${log.timestamp}</span>
+                    </div>
+                    <div style="color: var(--text-body);">${log.message}</div>
+                    ${Object.keys(log.details).length > 0 ? `<div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 6px;">${JSON.stringify(log.details)}</div>` : ''}
+                </div>
+            `).join('');
         };
         
         // Clear activity log
-        window.clearActivityLog = async () => {
+        window.clearActivityLog = () => {
             if (confirm('Are you sure you want to clear the activity log? This cannot be undone.')) {
-                try {
-                    // Delete all activity logs from Firebase
-                    const q = query(pCol('activity_log'));
-                    const snap = await getDocs(q);
-                    snap.forEach(async (doc) => {
-                        await deleteDoc(doc.ref);
-                    });
-                    
-                    activityLog = [];
-                    updateActivityDisplay();
-                    toast('Activity log cleared');
-                } catch(err) {
-                    alert('Error clearing activity log: ' + err.message);
-                }
+                activityLog = [];
+                localStorage.setItem('activityLog', JSON.stringify(activityLog));
+                updateActivityDisplay();
+                toast('Activity log cleared');
             }
         };
         
         // Update analytics display
-        const updateAnalyticsDisplay = async () => {
-            try {
-                // Load stats from Firebase
-                const snap = await getDoc(pDoc('analytics', 'visitor_stats'));
-                const saved = snap.exists() ? snap.data() : visitorStats;
-                const uniqueCount = Array.isArray(saved.unique) ? saved.unique.length : (saved.unique?.size || 0);
+        const updateAnalyticsDisplay = () => {
+            // Load stats from localStorage
+            const saved = JSON.parse(localStorage.getItem('visitorStats')) || visitorStats;
+            const uniqueCount = Array.isArray(saved.unique) ? saved.unique.length : saved.unique.size;
             
             // Update visitor counts
             const totalVisitors = document.getElementById('totalVisitors');
@@ -3487,9 +3443,6 @@
                     }).join('');
                 }
             }
-            } catch(err) {
-                console.log('Error loading analytics:', err.message);
-            }
         };
         
         // Track navigation
@@ -3547,7 +3500,7 @@
             window.scrollTo(0,0);
         }
 
-        window.admTab = async (tabId, el) => {
+        window.admTab = (tabId, el) => {
             document.querySelectorAll('.adm-view').forEach(e => e.classList.add('hidden'));
             document.getElementById('adm-'+tabId).classList.remove('hidden');
             
@@ -3556,12 +3509,12 @@
             
             // Update analytics display when analytics tab is opened
             if (tabId === 'analytics') {
-                await updateAnalyticsDisplay();
+                updateAnalyticsDisplay();
             }
             
             // Update activity display when activity tab is opened
             if (tabId === 'activity') {
-                await updateActivityDisplay();
+                updateActivityDisplay();
             }
         }
 
@@ -4677,15 +4630,7 @@
         // AUTH
         document.getElementById('btnLogin').onclick = async () => {
             try {
-                const email = document.getElementById('admEmail').value.trim();
-                
-                // Validate email is the authorized admin email
-                if (email !== ADMIN_EMAIL) {
-                    alert('Unauthorized. Only the designated admin email can access this portal.');
-                    logActivity('Login Failed', `Unauthorized login attempt with email: ${email}`, {email: email});
-                    return;
-                }
-                
+                const email = document.getElementById('admEmail').value;
                 await signInWithEmailAndPassword(auth, email, document.getElementById('admPass').value);
                 toast('Logged In');
                 logActivity('Login', `Admin user logged in: ${email}`);
