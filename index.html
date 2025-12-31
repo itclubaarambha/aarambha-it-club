@@ -2729,6 +2729,10 @@
                     <div class="sidebar-link" onclick="admTab('content', this)"><i class="fas fa-pen-nib" style="width:20px;"></i> Content</div>
                     <div class="sidebar-link" onclick="admTab('members', this)"><i class="fas fa-users" style="width:20px;"></i> Members</div>
                     
+                    <div class="sidebar-header">Analytics</div>
+                    <div class="sidebar-link" onclick="admTab('analytics', this)"><i class="fas fa-chart-bar" style="width:20px;"></i> Analytics</div>
+                    <div class="sidebar-link" onclick="admTab('activity', this)"><i class="fas fa-history" style="width:20px;"></i> Recent Changes</div>
+                    
                     <div class="sidebar-header">System</div>
                     <div class="sidebar-link" onclick="admTab('settings', this)"><i class="fas fa-sliders-h" style="width:20px;"></i> Settings</div>
                     <div class="sidebar-link" id="btnLogout" style="color: var(--danger); margin-top: 20px;"><i class="fas fa-sign-out-alt" style="width:20px;"></i> Logout</div>
@@ -2754,67 +2758,67 @@
                             </div>
                         </div>
                         
-                        <!-- Contact Us Section -->
+                        <!-- Quick Actions Section -->
                         <div style="margin-top: 40px;">
-                            <h3 style="margin-bottom: 20px;">Get in Touch</h3>
+                            <h3 style="margin-bottom: 20px;">Quick Actions</h3>
                             <div class="dashboard-apps-grid">
-                                <div class="dashboard-app-card">
+                                <div class="dashboard-app-card" onclick="admTab('inbox', document.querySelector('.sidebar-link[onclick*=inbox]'))" style="cursor: pointer;">
                                     <div class="dashboard-app-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
-                                        <i class="fas fa-envelope"></i>
+                                        <i class="fas fa-inbox"></i>
                                     </div>
                                     <div class="dashboard-app-info">
-                                        <div class="dashboard-app-title">Email</div>
-                                        <div class="dashboard-app-subtitle">Contact Us</div>
+                                        <div class="dashboard-app-title">View Requests</div>
+                                        <div class="dashboard-app-subtitle">Join & Ideas</div>
                                     </div>
                                 </div>
                                 
-                                <div class="dashboard-app-card">
+                                <div class="dashboard-app-card" onclick="admTab('members', document.querySelector('.sidebar-link[onclick*=members]'))" style="cursor: pointer;">
                                     <div class="dashboard-app-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
-                                        <i class="fas fa-phone"></i>
+                                        <i class="fas fa-users-cog"></i>
                                     </div>
                                     <div class="dashboard-app-info">
-                                        <div class="dashboard-app-title">Phone</div>
-                                        <div class="dashboard-app-subtitle">Call Us</div>
+                                        <div class="dashboard-app-title">Manage Members</div>
+                                        <div class="dashboard-app-subtitle">Approve & Remove</div>
                                     </div>
                                 </div>
                                 
-                                <div class="dashboard-app-card">
+                                <div class="dashboard-app-card" onclick="admTab('content', document.querySelector('.sidebar-link[onclick*=content]'))" style="cursor: pointer;">
                                     <div class="dashboard-app-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
-                                        <i class="fab fa-facebook"></i>
+                                        <i class="fas fa-pen-nib"></i>
                                     </div>
                                     <div class="dashboard-app-info">
-                                        <div class="dashboard-app-title">Facebook</div>
-                                        <div class="dashboard-app-subtitle">Follow Us</div>
+                                        <div class="dashboard-app-title">Create Content</div>
+                                        <div class="dashboard-app-subtitle">News & Team Posts</div>
                                     </div>
                                 </div>
                                 
-                                <div class="dashboard-app-card">
+                                <div class="dashboard-app-card" onclick="admTab('settings', document.querySelector('.sidebar-link[onclick*=settings]'))" style="cursor: pointer;">
                                     <div class="dashboard-app-icon" style="background: linear-gradient(135deg, #fa709a, #fee140);">
-                                        <i class="fab fa-instagram"></i>
+                                        <i class="fas fa-cog"></i>
                                     </div>
                                     <div class="dashboard-app-info">
-                                        <div class="dashboard-app-title">Instagram</div>
-                                        <div class="dashboard-app-subtitle">Follow Us</div>
+                                        <div class="dashboard-app-title">Configure</div>
+                                        <div class="dashboard-app-subtitle">Settings & Data</div>
                                     </div>
                                 </div>
                                 
-                                <div class="dashboard-app-card">
+                                <div class="dashboard-app-card" onclick="admTab('activity', document.querySelector('.sidebar-link[onclick*=activity]'))" style="cursor: pointer;">
                                     <div class="dashboard-app-icon" style="background: linear-gradient(135deg, #25D366, #128C7E);">
-                                        <i class="fab fa-whatsapp"></i>
+                                        <i class="fas fa-history"></i>
                                     </div>
                                     <div class="dashboard-app-info">
-                                        <div class="dashboard-app-title">WhatsApp</div>
-                                        <div class="dashboard-app-subtitle">Chat With Us</div>
+                                        <div class="dashboard-app-title">Recent Changes</div>
+                                        <div class="dashboard-app-subtitle">View Activity Log</div>
                                     </div>
                                 </div>
                                 
-                                <div class="dashboard-app-card">
+                                <div class="dashboard-app-card" onclick="admTab('analytics', document.querySelector('.sidebar-link[onclick*=analytics]'))" style="cursor: pointer;">
                                     <div class="dashboard-app-icon" style="background: linear-gradient(135deg, #1DA1F2, #0E71C8);">
-                                        <i class="fab fa-twitter"></i>
+                                        <i class="fas fa-chart-bar"></i>
                                     </div>
                                     <div class="dashboard-app-info">
-                                        <div class="dashboard-app-title">Twitter/X</div>
-                                        <div class="dashboard-app-subtitle">Follow Us</div>
+                                        <div class="dashboard-app-title">Analytics</div>
+                                        <div class="dashboard-app-subtitle">Visitor & Stats</div>
                                     </div>
                                 </div>
                             </div>
@@ -3070,6 +3074,89 @@
                         </div>
                     </div>
 
+                    <!-- TAB: ANALYTICS -->
+                    <div id="adm-analytics" class="adm-view hidden">
+                        <h3 style="margin-bottom: 24px;">Website Analytics</h3>
+                        
+                        <!-- Live Visitors -->
+                        <div class="card">
+                            <div class="card-header"><span class="card-title"><i class="fas fa-globe" style="margin-right:8px;"></i>Live Visitors</span></div>
+                            <div class="card-body">
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 12px; color: white; text-align: center;">
+                                        <div style="font-size: 2rem; font-weight: 700; margin-bottom: 8px;" id="liveVisitors">0</div>
+                                        <div style="font-size: 0.9rem; opacity: 0.9;">Users Online Now</div>
+                                    </div>
+                                    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 20px; border-radius: 12px; color: white; text-align: center;">
+                                        <div style="font-size: 2rem; font-weight: 700; margin-bottom: 8px;" id="totalVisitors">0</div>
+                                        <div style="font-size: 0.9rem; opacity: 0.9;">Total Visits (Today)</div>
+                                    </div>
+                                    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 20px; border-radius: 12px; color: white; text-align: center;">
+                                        <div style="font-size: 2rem; font-weight: 700; margin-bottom: 8px;" id="uniqueVisitors">0</div>
+                                        <div style="font-size: 0.9rem; opacity: 0.9;">Unique Visitors</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Device Analytics -->
+                        <div class="card">
+                            <div class="card-header"><span class="card-title"><i class="fas fa-devices" style="margin-right:8px;"></i>Device Breakdown</span></div>
+                            <div class="card-body">
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px;">
+                                    <div style="background: #f0f7ff; padding: 16px; border-radius: 10px; border-left: 4px solid #0066cc;">
+                                        <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;"><i class="fas fa-mobile-alt" style="margin-right: 6px;"></i>Mobile</div>
+                                        <div style="font-size: 1.8rem; font-weight: 700; color: var(--text-head);" id="deviceMobile">0</div>
+                                        <div style="font-size: 0.8rem; color: var(--text-muted);" id="percentMobile">0%</div>
+                                    </div>
+                                    <div style="background: #f0f7ff; padding: 16px; border-radius: 10px; border-left: 4px solid #00b894;">
+                                        <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;"><i class="fas fa-laptop" style="margin-right: 6px;"></i>Laptop</div>
+                                        <div style="font-size: 1.8rem; font-weight: 700; color: var(--text-head);" id="deviceLaptop">0</div>
+                                        <div style="font-size: 0.8rem; color: var(--text-muted);" id="percentLaptop">0%</div>
+                                    </div>
+                                    <div style="background: #f0f7ff; padding: 16px; border-radius: 10px; border-left: 4px solid #fdcb6e;">
+                                        <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;"><i class="fas fa-tablet-alt" style="margin-right: 6px;"></i>Tablet</div>
+                                        <div style="font-size: 1.8rem; font-weight: 700; color: var(--text-head);" id="deviceTablet">0</div>
+                                        <div style="font-size: 0.8rem; color: var(--text-muted);" id="percentTablet">0%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Top Pages -->
+                        <div class="card">
+                            <div class="card-header"><span class="card-title"><i class="fas fa-file-alt" style="margin-right:8px;"></i>Top Pages Visited</span></div>
+                            <div class="card-body">
+                                <div id="topPagesContainer" style="display: flex; flex-direction: column; gap: 12px;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Browser Stats -->
+                        <div class="card">
+                            <div class="card-header"><span class="card-title"><i class="fas fa-compass" style="margin-right:8px;"></i>Top Browsers</span></div>
+                            <div class="card-body">
+                                <div id="topBrowsersContainer" style="display: flex; flex-direction: column; gap: 12px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: RECENT CHANGES -->
+                    <div id="adm-activity" class="adm-view hidden">
+                        <h3 style="margin-bottom: 24px;">Activity Log</h3>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title">Recent Admin Actions</span>
+                                <button class="btn btn-secondary btn-sm" style="margin-left: auto;" onclick="clearActivityLog()">Clear Log</button>
+                            </div>
+                            <div class="card-body">
+                                <div id="activityLogContainer" style="display: flex; flex-direction: column; gap: 12px; max-height: 600px; overflow-y: auto;">
+                                    <p class="text-muted" style="text-align: center; padding: 40px 20px;">No activity yet. Actions will appear here.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -3079,7 +3166,7 @@
     <!-- FIREBASE APP LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, setDoc, getDoc, deleteDoc, updateDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, setDoc, getDoc, deleteDoc, updateDoc, query, orderBy, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         // Storage import removed as requested
 
@@ -3139,6 +3226,278 @@
         let membersCache = [];
         let joinRequestsCache = [];
         let confirmCallback = null;
+        
+        // --- ADMIN EMAIL (HARDCODED) ---
+        const ADMIN_EMAIL = 'admin@aarambha.com';
+        
+        // --- ANALYTICS & ACTIVITY TRACKING ---
+        let activityLog = [];
+        let visitorStats = {
+            today: 0,
+            unique: new Set(),
+            devices: { mobile: 0, laptop: 0, tablet: 0 },
+            browsers: {},
+            pages: {},
+            liveVisitors: 0
+        };
+        let liveVisitorIds = new Set();
+        let lastActivityTime = Date.now();
+        
+        // Detect device type
+        const detectDevice = () => {
+            const ua = navigator.userAgent.toLowerCase();
+            if (/mobile|android|iphone|ipod|blackberry|iemobile|opera mini/i.test(ua)) return 'mobile';
+            if (/ipad|android/.test(ua)) return 'tablet';
+            return 'laptop';
+        };
+        
+        // Detect browser
+        const detectBrowser = () => {
+            const ua = navigator.userAgent;
+            if (ua.indexOf('Chrome') > -1 && ua.indexOf('Chromium') === -1) return 'Chrome';
+            if (ua.indexOf('Safari') > -1 && ua.indexOf('Chrome') === -1) return 'Safari';
+            if (ua.indexOf('Firefox') > -1) return 'Firefox';
+            if (ua.indexOf('Edg') > -1) return 'Edge';
+            if (ua.indexOf('Opera') > -1 || ua.indexOf('OPR') > -1) return 'Opera';
+            return 'Other';
+        };
+        
+        // Track page visit
+        const trackPageVisit = () => {
+            const page = window.location.hash.replace('#', '') || 'home';
+            visitorStats.pages[page] = (visitorStats.pages[page] || 0) + 1;
+        };
+        
+        // Track browser
+        const trackBrowser = () => {
+            const browser = detectBrowser();
+            visitorStats.browsers[browser] = (visitorStats.browsers[browser] || 0) + 1;
+        };
+        
+        // Initialize visitor tracking
+        const initVisitorTracking = () => {
+            const device = detectDevice();
+            visitorStats.devices[device]++;
+            visitorStats.today++;
+            visitorStats.unique.add(navigator.userAgent + '-' + new Date().toDateString());
+            trackBrowser();
+            trackPageVisit();
+            
+            // Add to live visitors
+            const visitorId = Date.now() + '-' + Math.random();
+            liveVisitorIds.add(visitorId);
+            updateLiveVisitors();
+            
+            // Remove from live visitors after 5 minutes of inactivity
+            setTimeout(() => {
+                liveVisitorIds.delete(visitorId);
+                updateLiveVisitors();
+            }, 5 * 60 * 1000);
+            
+            saveVisitorStats();
+            logActivity('Visitor', `New visitor detected (${device})`);
+        };
+        
+        // Update live visitors count
+        const updateLiveVisitors = () => {
+            visitorStats.liveVisitors = liveVisitorIds.size;
+            const el = document.getElementById('liveVisitors');
+            if (el) el.innerText = visitorStats.liveVisitors;
+            saveVisitorStats();
+        };
+        
+        // Save visitor stats to Firebase
+        const saveVisitorStats = async () => {
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                await setDoc(pDoc('analytics', 'visitor_stats'), {
+                    date: today,
+                    today: visitorStats.today,
+                    unique: Array.from(visitorStats.unique),
+                    devices: visitorStats.devices,
+                    browsers: visitorStats.browsers,
+                    pages: visitorStats.pages,
+                    liveVisitors: visitorStats.liveVisitors,
+                    lastUpdated: new Date()
+                });
+            } catch(err) {
+                console.log('Analytics save error (may be normal for anonymous users):', err.code);
+            }
+        };
+        
+        // Log activity
+        const logActivity = (type, message, details = {}) => {
+            const log = {
+                timestamp: new Date().toLocaleString(),
+                type: type,
+                message: message,
+                details: details
+            };
+            activityLog.unshift(log);
+            
+            // Keep only last 100 activities
+            if (activityLog.length > 100) activityLog.pop();
+            
+            localStorage.setItem('activityLog', JSON.stringify(activityLog));
+            updateActivityDisplay();
+        };
+        
+        // Update activity display
+        const updateActivityDisplay = async () => {
+            const container = document.getElementById('activityLogContainer');
+            if (!container) return;
+            
+            try {
+                // Load activity logs from Firebase, ordered by timestamp descending
+                const q = query(pCol('activity_log'), orderBy('timestamp', 'desc'));
+                const snap = await getDocs(q);
+                const logs = [];
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    logs.push({
+                        type: data.type,
+                        message: data.message,
+                        timestamp: data.timestamp?.toDate?.()?.toLocaleString?.() || new Date(data.timestamp).toLocaleString?.() || data.timestamp,
+                        details: data.details || {}
+                    });
+                });
+                
+                if (logs.length === 0) {
+                    container.innerHTML = '<p class="text-muted" style="text-align: center; padding: 40px 20px;">No activity yet. Actions will appear here.</p>';
+                    return;
+                }
+                
+                container.innerHTML = logs.map((log, idx) => `
+                    <div style="background: #f0f7ff; padding: 12px; border-radius: 8px; border-left: 4px solid var(--primary);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <span style="font-weight: 600; color: var(--text-head);">${log.type}</span>
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">${log.timestamp}</span>
+                        </div>
+                        <div style="color: var(--text-body);">${log.message}</div>
+                        ${Object.keys(log.details).length > 0 ? `<div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 6px;">${JSON.stringify(log.details)}</div>` : ''}
+                    </div>
+                `).join('');
+            } catch(err) {
+                console.log('Error loading activity log:', err.message);
+                container.innerHTML = '<p class="text-muted" style="text-align: center; padding: 40px 20px;">Unable to load activity log.</p>';
+            }
+        };
+        
+        // Clear activity log
+        window.clearActivityLog = async () => {
+            if (confirm('Are you sure you want to clear the activity log? This cannot be undone.')) {
+                try {
+                    // Delete all activity logs from Firebase
+                    const q = query(pCol('activity_log'));
+                    const snap = await getDocs(q);
+                    snap.forEach(async (doc) => {
+                        await deleteDoc(doc.ref);
+                    });
+                    
+                    activityLog = [];
+                    updateActivityDisplay();
+                    toast('Activity log cleared');
+                } catch(err) {
+                    alert('Error clearing activity log: ' + err.message);
+                }
+            }
+        };
+        
+        // Update analytics display
+        const updateAnalyticsDisplay = async () => {
+            try {
+                // Load stats from Firebase
+                const snap = await getDoc(pDoc('analytics', 'visitor_stats'));
+                const saved = snap.exists() ? snap.data() : visitorStats;
+                const uniqueCount = Array.isArray(saved.unique) ? saved.unique.length : (saved.unique?.size || 0);
+            
+            // Update visitor counts
+            const totalVisitors = document.getElementById('totalVisitors');
+            const uniqueVisitors = document.getElementById('uniqueVisitors');
+            const liveVisitors = document.getElementById('liveVisitors');
+            
+            if (totalVisitors) totalVisitors.innerText = saved.today || 0;
+            if (uniqueVisitors) uniqueVisitors.innerText = uniqueCount || 0;
+            if (liveVisitors) liveVisitors.innerText = saved.liveVisitors || 0;
+            
+            // Update device breakdown
+            const totalDevices = (saved.devices.mobile || 0) + (saved.devices.laptop || 0) + (saved.devices.tablet || 0);
+            
+            const mobileEl = document.getElementById('deviceMobile');
+            const laptopEl = document.getElementById('deviceLaptop');
+            const tabletEl = document.getElementById('deviceTablet');
+            const percentMobile = document.getElementById('percentMobile');
+            const percentLaptop = document.getElementById('percentLaptop');
+            const percentTablet = document.getElementById('percentTablet');
+            
+            if (mobileEl) mobileEl.innerText = saved.devices.mobile || 0;
+            if (laptopEl) laptopEl.innerText = saved.devices.laptop || 0;
+            if (tabletEl) tabletEl.innerText = saved.devices.tablet || 0;
+            
+            if (totalDevices > 0) {
+                if (percentMobile) percentMobile.innerText = Math.round((saved.devices.mobile || 0) / totalDevices * 100) + '%';
+                if (percentLaptop) percentLaptop.innerText = Math.round((saved.devices.laptop || 0) / totalDevices * 100) + '%';
+                if (percentTablet) percentTablet.innerText = Math.round((saved.devices.tablet || 0) / totalDevices * 100) + '%';
+            }
+            
+            // Update top pages
+            const topPagesContainer = document.getElementById('topPagesContainer');
+            if (topPagesContainer) {
+                const pages = Object.entries(saved.pages || {}).sort((a, b) => b[1] - a[1]).slice(0, 5);
+                if (pages.length === 0) {
+                    topPagesContainer.innerHTML = '<p class="text-muted" style="text-align: center; padding: 20px;">No page data yet</p>';
+                } else {
+                    topPagesContainer.innerHTML = pages.map(([page, count]) => {
+                        const percentage = (count / (saved.today || 1)) * 100;
+                        return `
+                            <div style="background: #f0f7ff; padding: 12px; border-radius: 8px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-weight: 600; color: var(--text-head);">${page || 'Home'}</span>
+                                    <span style="color: var(--text-muted);">${count} visits</span>
+                                </div>
+                                <div style="background: #d9e9f7; height: 6px; border-radius: 3px; overflow: hidden;">
+                                    <div style="background: linear-gradient(90deg, #0066cc, #00b894); height: 100%; width: ${percentage}%;"></div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+            
+            // Update top browsers
+            const topBrowsersContainer = document.getElementById('topBrowsersContainer');
+            if (topBrowsersContainer) {
+                const browsers = Object.entries(saved.browsers || {}).sort((a, b) => b[1] - a[1]).slice(0, 5);
+                if (browsers.length === 0) {
+                    topBrowsersContainer.innerHTML = '<p class="text-muted" style="text-align: center; padding: 20px;">No browser data yet</p>';
+                } else {
+                    topBrowsersContainer.innerHTML = browsers.map(([browser, count]) => {
+                        const percentage = (count / (saved.today || 1)) * 100;
+                        return `
+                            <div style="background: #f0f7ff; padding: 12px; border-radius: 8px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-weight: 600; color: var(--text-head);">${browser}</span>
+                                    <span style="color: var(--text-muted);">${count} visits</span>
+                                </div>
+                                <div style="background: #d9e9f7; height: 6px; border-radius: 3px; overflow: hidden;">
+                                    <div style="background: linear-gradient(90deg, #0066cc, #3399ff); height: 100%; width: ${percentage}%;"></div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+            } catch(err) {
+                console.log('Error loading analytics:', err.message);
+            }
+        };
+        
+        // Track navigation
+        window.addEventListener('hashchange', () => {
+            trackPageVisit();
+            saveVisitorStats();
+            logActivity('Navigation', `User visited ${window.location.hash || 'home'}`);
+        });
 
         // --- UI UTILS ---
         const toast = (msg) => {
@@ -3188,12 +3547,22 @@
             window.scrollTo(0,0);
         }
 
-        window.admTab = (tabId, el) => {
+        window.admTab = async (tabId, el) => {
             document.querySelectorAll('.adm-view').forEach(e => e.classList.add('hidden'));
             document.getElementById('adm-'+tabId).classList.remove('hidden');
             
             document.querySelectorAll('.sidebar-link').forEach(e => e.classList.remove('active'));
             el.classList.add('active');
+            
+            // Update analytics display when analytics tab is opened
+            if (tabId === 'analytics') {
+                await updateAnalyticsDisplay();
+            }
+            
+            // Update activity display when activity tab is opened
+            if (tabId === 'activity') {
+                await updateActivityDisplay();
+            }
         }
 
         // --- AUTH & INIT ---
@@ -3219,6 +3588,9 @@
 
         // --- DATA HANDLERS ---
         function loadPublicData() {
+            // Initialize visitor tracking
+            initVisitorTracking();
+            
             // 1. Settings (Config & Banner)
             onSnapshot(pDoc('settings', 'config'), snap => {
                 if(snap.exists()) {
@@ -3640,6 +4012,8 @@
 
         // --- ADMIN ACTIONS ---
         function loadAdminData() {
+            logActivity('Admin', 'Admin logged in and accessed dashboard');
+            
             // Requests
             onSnapshot(query(pCol('join_requests'), orderBy('timestamp', 'desc')), snap => {
                 joinRequestsCache = [];
@@ -4303,11 +4677,27 @@
         // AUTH
         document.getElementById('btnLogin').onclick = async () => {
             try {
-                await signInWithEmailAndPassword(auth, document.getElementById('admEmail').value, document.getElementById('admPass').value);
+                const email = document.getElementById('admEmail').value.trim();
+                
+                // Validate email is the authorized admin email
+                if (email !== ADMIN_EMAIL) {
+                    alert('Unauthorized. Only the designated admin email can access this portal.');
+                    logActivity('Login Failed', `Unauthorized login attempt with email: ${email}`, {email: email});
+                    return;
+                }
+                
+                await signInWithEmailAndPassword(auth, email, document.getElementById('admPass').value);
                 toast('Logged In');
-            } catch(e) { alert(e.message); }
+                logActivity('Login', `Admin user logged in: ${email}`);
+            } catch(e) { 
+                alert(e.message);
+                logActivity('Login Failed', `Failed login attempt`, {error: e.message});
+            }
         };
-        document.getElementById('btnLogout').onclick = () => signOut(auth);
+        document.getElementById('btnLogout').onclick = () => {
+            logActivity('Logout', 'Admin user logged out');
+            signOut(auth);
+        };
 
         init();
     </script>
