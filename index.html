@@ -814,7 +814,7 @@
         /* --- 7. JOIN/CONTACT APPS SIDEBAR --- */
         .join-apps-sidebar {
             width: 320px;
-            display: flex;
+            display: none; /* Hide contact us sidebar */
             flex-direction: column;
             gap: 0;
         }
@@ -3241,11 +3241,18 @@
         let liveVisitorIds = new Set();
         let lastActivityTime = Date.now();
         
-        // Detect device type
+        // Detect device type - More accurate detection
         const detectDevice = () => {
             const ua = navigator.userAgent.toLowerCase();
-            if (/mobile|android|iphone|ipod|blackberry|iemobile|opera mini/i.test(ua)) return 'mobile';
-            if (/ipad|android/.test(ua)) return 'tablet';
+            // Check for mobile first (before checking android for tablets)
+            if (/iphone|ipod|blackberry|iemobile|opera mini/.test(ua)) return 'mobile';
+            if (/android/.test(ua)) {
+                // If android has tablet indicators, it's a tablet
+                if (/tablet|ipad|nexus 7|nexus 10|xoom/.test(ua)) return 'tablet';
+                return 'mobile';
+            }
+            if (/ipad|windows phone|playbook|silk/.test(ua)) return 'tablet';
+            // Default to laptop for desktop browsers
             return 'laptop';
         };
         
@@ -3520,6 +3527,12 @@
 
         // --- AUTH & INIT ---
         const init = async () => {
+            // Track visitor immediately on init, before any auth
+            if (!window.visitorTracked) {
+                initVisitorTracking();
+                window.visitorTracked = true;
+            }
+            
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                 await signInWithCustomToken(auth, __initial_auth_token);
             } else {
@@ -3541,8 +3554,11 @@
 
         // --- DATA HANDLERS ---
         function loadPublicData() {
-            // Initialize visitor tracking
-            initVisitorTracking();
+            // Initialize visitor tracking for all users (including non-authenticated)
+            if (!window.visitorTracked) {
+                initVisitorTracking();
+                window.visitorTracked = true;
+            }
             
             // 1. Settings (Config & Banner)
             onSnapshot(pDoc('settings', 'config'), snap => {
@@ -4654,7 +4670,7 @@
                 &copy; 2025 <span style="color: #0066cc; font-weight: 700;">Aarambha IT Club</span>. All rights reserved.
             </p>
             <p style="margin: 0; font-size: 12px; color: #5a7a8a;">
-                Designed & Developed by <span style="color: #0066cc; font-weight: 600;">Ajaya Dhungana</span>
+                Designed & Developed by <span style="color: #00ff55; font-weight: 600;">KARTA</span>
             </p>
         </div>
     </footer>
